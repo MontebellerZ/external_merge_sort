@@ -353,6 +353,33 @@ public class App {
         // execution
         Utils.initialize();
 
+        // if a parameter is sent to the program, its assumed that the parameter is the
+        // amount of random numbers desired
+        if (args.length > 0) {
+            try {
+                // trys to parse the parameter to a integer
+                int sizeArray = Integer.parseInt(args[0]);
+
+                // creates a random int array with the size informed with the parameter
+                int[] intArray = Utils.randomIntArray(sizeArray);
+
+                // creates a writer to set all the random values to the main entry file
+                FileWriter entryMain = new FileWriter(pathMain + "/" + entMainName);
+
+                // function that prints all the values within the file
+                Utils.printArrayToFile(entryMain, intArray);
+
+                // closes the file
+                entryMain.close();
+            } catch (Exception err) {
+                // if something goes wrong with the parameter or the file, returns the function
+                // and cancels the execution
+                err.printStackTrace();
+                System.out.println("\n\nErro ao tentar processar o parâmetro informado.");
+                return;
+            }
+        }
+
         // does the first ordering getting values from the main entry file "entrada.txt"
         // and writting them on the aux files. also retrieves the count of how many
         // entries were detected on the main entry file
