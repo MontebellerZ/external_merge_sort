@@ -5,15 +5,15 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 public class App {
-    // root path for the main entry file
+    // Caminho raiz para o arquivo de entrada
     public static String pathMain = ".";
-    // root path for the aux files
+    // Caminho raiz para os arquivos auxiliares
     public static String pathMemory = "./auxFiles";
 
-    // file name of the entry file
+    // Nome do arquivo de entrada
     public static String entMainName = "entrada.txt";
 
-    // file names of the aux files
+    // Nomes dos arquivos auxiliares
     public static String aux1Name = "aux1.txt";
     public static String aux2Name = "aux2.txt";
     public static String aux3Name = "aux3.txt";
@@ -21,122 +21,127 @@ public class App {
     public static String aux5Name = "aux5.txt";
     public static String aux6Name = "aux6.txt";
 
-    // sets the memory size of the buffer
-    public static int bufferLimit = 3;
+    // Tamanho da memória interna
+    public static int memoryLimit = 3;
 
-    // function to get the values from "entrada.txt". also does the first ordering
-    // step of the algorithm while inserting them to the aux files.
+    /**
+     * Recebe os valores do arquivo de entrada, faz a primeira ordenação de acordo
+     * com o tamanho limite da memória e insere as colunas geradas nos arquivos
+     * auxiliares 1, 2 e 3.
+     * 
+     * @return int retorna um valor inteiro representando a quantidade de valores
+     *         lidos no arquivo de entrada.
+     */
     public static int splitMainEntry() {
-        // variable to count and return the amount of entries on the main entry file
+        // Variável contadora para somar a quantidade de valores no arquivo de entrada
         int counterEntries = 0;
 
         try {
-            // array of writers, each being a writer for the first three aux files
+            // Vetor de escritores para os arquivos auxiliares 1, 2 e 3
             FileWriter[] writerEntArray = {
                     new FileWriter(pathMemory + "/" + aux1Name),
                     new FileWriter(pathMemory + "/" + aux2Name),
                     new FileWriter(pathMemory + "/" + aux3Name)
             };
 
-            // create a reader for the main entry file "entrada.txt"
+            // Leitor para o arquivo de entrada
             File entryMain = new File(pathMain, entMainName);
             Scanner reader = new Scanner(entryMain);
 
-            // stores the amount of times while has runned
+            // Contador de vezes que o while executou
             int counter = 0;
-            // runs repeatedly while there is more lines to read on the main entry file
-            // "entrada.txt"
-            while (reader.hasNextLine()) {
-                // picks the file writer that corresponds to counter % bufferLimit
-                // considering that we have a limit of three on the buffer memory, we may see
-                // that the writing file will change to the next one every three loops
-                FileWriter activeWriter = writerEntArray[counter % bufferLimit];
 
-                // array that stores the amount values corresponding to the buffer
-                int[] vals = new int[bufferLimit];
-                // variable to help ordering the values on the above array
+            /**
+             * Roda repetidamente até que não existam mais linhas a serem lidos no arquivo
+             * de entrada
+             */
+            while (reader.hasNextLine()) {
+                /**
+                 * Variável definida para receber escritor que corresponde ao arquivo que deverá
+                 * ser preenchido durante essa execução do while.
+                 */
+                FileWriter activeWriter = writerEntArray[counter % memoryLimit];
+
+                // Vetor que receberá um grupo de 3 valores lidos diretamente da entrada
+                int[] vals = new int[memoryLimit];
+                // Variável auxiliar para realizar as trocas de posições dentro do vetor
                 int aux;
 
-                // string to receive the values from vals array in order
+                // Variável que receberá os valores a serem escritos já ordenados
                 String ordered;
 
-                // first position of the array receives the next number read from the main entry
-                // file "entrada.txt"
+                // Leitura da primeira posição do arquivo de entrada é armazenada no vetor
                 vals[0] = Integer.parseInt(reader.nextLine());
-                // sums 1 to the amount of entries read on the main entry file "entrada.txt"
+                // Soma em um a quantidade de dados lidos do arquivo de entrada
                 counterEntries++;
-                // if there is any more lines in entry main "entrada.txt"
+                // Verifica se ainda existe alguma linha a ser lida na entrada
                 if (reader.hasNextLine()) {
-                    // second position of the array receives the next number read from the main
-                    // entry file "entrada.txt"
+                    // Leitura da segunda posição do arquivo de entrada é armazenada no vetor
                     vals[1] = Integer.parseInt(reader.nextLine());
-                    // sums 1 to the amount of entries read on the main entry file "entrada.txt"
+                    // Soma em um a quantidade de dados lidos do arquivo de entrada
                     counterEntries++;
 
-                    // order the first two values on the array, changing their positions if the
-                    // first is greater than the second
+                    // Ordena os dois primeiros valores do vetor
                     if (vals[0] > vals[1]) {
                         aux = vals[0];
                         vals[0] = vals[1];
                         vals[1] = aux;
                     }
 
-                    // if there is any more lines in entry main "entrada.txt"
+                    // Verifica se ainda existe alguma linha a ser lida na entrada
                     if (reader.hasNextLine()) {
-                        // third position of the array receives the next number read from the main entry
-                        // file "entrada.txt"
+                        // Leitura da terceira posição do arquivo de entrada é armazenada no vetor
                         vals[2] = Integer.parseInt(reader.nextLine());
-                        // sums 1 to the amount of entries read on the main entry file "entrada.txt"
+                        // Soma em um a quantidade de dados lidos do arquivo de entrada
                         counterEntries++;
 
-                        // the next two orderings consider that the first two values are already ordered
-
-                        // order the first and the third values on the array, changing their positions
-                        // if the first is greater than the third
+                        // Ordena o primeiro e o terceiro valor do vetor
                         if (vals[0] > vals[2]) {
                             aux = vals[0];
                             vals[0] = vals[2];
                             vals[2] = aux;
                         }
 
-                        // order the second and the third values on the array, changing their positions
-                        // if the second is greater than the third
+                        // Ordena o segundo e o terceiro valor do vetor
                         if (vals[1] > vals[2]) {
                             aux = vals[1];
                             vals[1] = vals[2];
                             vals[2] = aux;
                         }
 
-                        // sets the ordered string with the values from the vals array already ordered
+                        // Define a string a ser escrita pelo activeWriter
                         ordered = String.format("%d\n%d\n%d", vals[0], vals[1], vals[2]);
                     }
-                    // if there is no more lines to fulfill the third val, the string receives only
-                    // the first two
+                    // Caso não haja mais valores a serem lidos no arquivo de entrada
                     else {
+                        // Define a string a ser escrita pelo activeWriter
                         ordered = String.format("%d\n%d", vals[0], vals[1]);
                     }
                 }
-                // if there is no more lines to fulfill the second and third vals, the string
-                // receives only the first
+                // Caso não haja mais valores a serem lidos no arquivo de entrada
                 else {
+                    // Define a string a ser escrita pelo activeWriter
                     ordered = String.format("%d", vals[0]);
                 }
 
-                // prints the vals ordered on the active writer
-                activeWriter.write(counter >= bufferLimit ? "\n" + ordered : ordered);
+                /**
+                 * Efetivamente escreve a coluna resultante no arquivo auxiliar e pula uma linha
+                 * se for o início do arquivo
+                 */
+                activeWriter.write(counter >= memoryLimit ? "\n" + ordered : ordered);
 
-                // count +1 loop runned
+                // Soma em um a quantidade de vezes que o while rodou
                 counter++;
             }
 
-            // closes all the writers from aux files
+            // Fecha todos os arquivos de escrita
             for (int i = 0; i < writerEntArray.length; i++) {
                 writerEntArray[i].close();
             }
-            // closes the reader from the main entry file "entrada.txt"
+            // Fecha o arquivo de entrada
             reader.close();
 
-            // return the amout of entries read on the main entry file "entrada.txt"
+            // Retorna a quantidade de valores lidos no arquivo de entrada
             return counterEntries;
         } catch (FileNotFoundException err) {
             err.printStackTrace();
@@ -144,35 +149,43 @@ public class App {
             err.printStackTrace();
         }
 
-        // return 0 in case of error during the processing
+        // Retorna 0 caso haja algum erro durante a execução da função
         return 0;
     }
 
-    // recursive function that goes through the aux files, ordering them based on
-    // the external merge sort algorithm and finally returning the final file with
-    // all the elements ordered
+    /**
+     * Função recursiva que combina e ordena as colunas de valores dos arquivos
+     * auxiliares conforme o método Merge Sort Externo.
+     * 
+     * A recursividade é utilizada para alternar qual grupo representa os escritores
+     * e qual grupo representa os leitores durante a execução atual da função.
+     * 
+     * Grupos:
+     * A -> arquivos auxiliares 1, 2 e 3.
+     * B -> arquivos auxiliares 4, 5 e 6.
+     * 
+     * Os grupos escritor e leitor são definidos conforme o parâmetro activeGroup:
+     * É ímpar -> leitores: Grupo A, escritores: Grupo B.
+     * É par -> leitores: Grupo B, escritores: Grupo A.
+     * 
+     * @param activeGroup somatório de vezes que a função foi chamada
+     *                    recursivamente. Define qual grupo será o escritor e qual
+     *                    será o leitor.
+     * @return File retorna o arquivo auxiliar final com todos os valores já
+     *         ordenados. Caso haja erro durante a execução da função, é retornado
+     *         null.
+     */
     public static File alternateOrder(int activeGroup) {
-        // the activeGroup parameter defines which group of aux files will be the ones
-        // to read and the ones to write on this run of the function based on if
-        // activeGroup is odd or even. by default, the first run will be with the group
-        // 1 (an odd number), that sets the aux files 1, 2 and 3 as readers and the aux
-        // files 4, 5 and 6 as the writers. after the first run, if all elements are not
-        // already ordered on the first reader file, it calls itself on a recursive
-        // manner, setting the activeGroup as activeGroup+1. if activeGroup was odd on
-        // the last run, as soon as it receives +1, it turns to even and runs the aux
-        // files inverted (1, 2 and 3 as writers and 4, 5 and 6 as readers).
-
         try {
-            // registers the reader actual column index
+            // Armazena o index da coluna que está sendo lida atualmente nos arquivos
             int activeColumn = 0;
 
-            // gets the correct aux files based on the group that is set to run by the
-            // activeGroup parameter being odd or even
+            // Define os arquivos auxiliares que servirão de leitura
             File auxFile1 = new File(pathMemory, (activeGroup % 2 == 1 ? aux1Name : aux4Name));
             File auxFile2 = new File(pathMemory, (activeGroup % 2 == 1 ? aux2Name : aux5Name));
             File auxFile3 = new File(pathMemory, (activeGroup % 2 == 1 ? aux3Name : aux6Name));
 
-            // sets the scanners to the aux reader files
+            // Define os leitores conforme os arquivos de leitura
             Scanner[] auxReader = {
                     new Scanner(auxFile1),
                     new Scanner(auxFile2),
@@ -182,52 +195,60 @@ public class App {
             // if there are no lines to read on the second reader file, it means that the
             // first one has all the elements already ordered and the function can stop
             // running, returning the file that contains the ordered elements
+            /**
+             * Verifica se o segundo arquivo de leitura possui algum valor a ser lido. Se
+             * não houver valores a serem lidos, significa que todos os valores se encontram
+             * no primeiro arquivo de leitura e que o processo de ordenação foi finalizado,
+             * então retorna o primeiro arquivo de leitura.
+             */
             if (!(auxReader[1].hasNextLine())) {
-                // closes all the reader files so it doesn't leak any memory
+                // Fecha os arquivos dos leitores
                 for (int i = 0; i < auxReader.length; i++) {
                     auxReader[i].close();
                 }
 
-                // returns the file that contains all the elements ordered
+                // Retorna o arquivo com todos os valores ordenados
                 return auxFile1;
             }
 
-            // the rest of the function code below this point will only run if there is at
-            // least one element on the second reader file
+            /**
+             * O resto da função (código abaixo) só roda caso exista pelo menos uma linha a
+             * ser lida no segundo arquivo de leitura
+             */
 
-            // sets the aux writer files
+            // Define os escritores com os outros arquivos auxiliares
             FileWriter[] auxWriter = {
                     new FileWriter(pathMemory + "/" + (activeGroup % 2 != 1 ? aux1Name : aux4Name)),
                     new FileWriter(pathMemory + "/" + (activeGroup % 2 != 1 ? aux2Name : aux5Name)),
                     new FileWriter(pathMemory + "/" + (activeGroup % 2 != 1 ? aux3Name : aux6Name))
             };
 
-            // sets the array of values that will store the ones from the aux readers
+            // Define o vetor para receber os valores dos arquivos de leitura
             int[] vals = { 0, 0, 0 };
-            // sets the array that will store the index of the last read value in each file
+            // Define o vetor que armazenará a última posição lida de cada arquivo leitor
             int[] lastPosFile = { -1, -1, -1 };
 
-            // while the first reader has more lines to read, it will keep running. there is
-            // no need to check if the other readers has more elements to read as the first
-            // one will always have an amount of values greater or equal to the others
+            /**
+             * Mantém o loop while enquanto ainda existem linhas a serem lidas no primeiro
+             * arquivo leitor. Não é necessário verificar os outros arquivos pois a
+             * quantidade de valores dele é sempre maior ou igual à dos outros
+             */
             while (auxReader[0].hasNextLine()) {
-                // array that stores the status of the aux files based in if they have already
-                // reached the stop point of the group that is actually running now. if it has
-                // reached, the status of the correspondent file will turn to false and it will
-                // not be considered on the ordering until all the column group also finishes
-                // its values. the initial status of this files correspond to if the file still
-                // have elements on the next lines to be read
+                /**
+                 * Armazena quais arquivos estão ativos ou inativos conforme a leitura das
+                 * colunas de valores e se existem mais linhas a serem lidas no arquivo
+                 */
                 boolean[] activeFile = {
                         auxReader[0].hasNextLine(),
                         auxReader[1].hasNextLine(),
                         auxReader[2].hasNextLine()
                 };
 
-                // loop that checks each position of the activeFile array and, if the file is
-                // still available, reads the next element and insert it on the corresponding
-                // index on the vals array, after the insertion, the lastPosFile array sums 1 to
-                // the corresponding index position, updating the registered last read position
-                // on the file
+                /**
+                 * Verifica se cada arquivo ainda está ativo. Se estiver, faz a primeira leitura
+                 * do mesmo e armazena no vetor ed valores, atualizando também o index da última
+                 * posição lida no arquivo
+                 */
                 for (int i = 0; i < vals.length; i++) {
                     if (activeFile[i]) {
                         vals[i] = Integer.parseInt(auxReader[i].nextLine());
@@ -235,82 +256,92 @@ public class App {
                     }
                 }
 
-                // variable that stores the groupSize on this run, this takes on counting that
-                // the group size increases exponentially on each run, so the calculation will
-                // be set to bufferLimit powered by the amount of times that the function has
-                // been called. take as example, the first run will have the group size as 3,
-                // since it is equal to the bufferLimit, the next run will be set to 9, as the
-                // groups of 3 of the 3 files will be combined into one, therefore, 3*3
-                // will be 9, same as 3^2. the next run will be combining the groups of 9 of the
-                // 3 files into one group of 27, same as 9*3 or 3^3, and so on.
-                int groupSize = (int) (Math.pow(bufferLimit, activeGroup + 1));
+                /**
+                 * Calcula e armazena qual a quantidade máxima de dados por coluna de escrita
+                 * para a
+                 * execução atual do while
+                 * 
+                 * A quantidade é definida pela potência do limite de memória pela quantidade de
+                 * vezes que a função rodou mais um. É somado mais um pois a primeira ordenação
+                 * já foi feita anteriormente à função.
+                 * 
+                 * -> Ex 1: 1° execução da função é representada por 3^(1+1) = 9 por coluna
+                 * -> Ex 2: 2° execução da função é representada por 3^(2+1) = 27 por coluna
+                 * -> Ex 3: 3° execução da função é representada por 3^(3+1) = 81 por coluna
+                 */
+                int groupSize = (int) (Math.pow(memoryLimit, activeGroup + 1));
 
-                // variable that counts the amount of times the next while has runned
+                // Realiza a contagem de vezes que o while foi executado
                 int counter = 0;
-                // loops while the activeFile still have any group that has elements to be read
-                // yet. once all the files has being completely read, the loop will break and
-                // the father while will run again with the next set of groups if the first file
-                // has not been completely read yet.
+                /**
+                 * A função Utils.boolArrayContains(arr: boolean[], val: boolean) verifica se o
+                 * valor booleano existe dentro do vetor booleano informado
+                 * 
+                 * Mantém o loop rodando enquanto pelo menos um dos arquivos ainda está ativo
+                 */
                 while (Utils.boolArrayContains(activeFile, true)) {
-                    // stores the index of the file that has the smaller value on the actual group
+                    // Variável para receber o index do arquivo com o menor valor do grupo
                     int smallestFile = -1;
 
-                    // loops through each activeFile checking if it is available and setting the
-                    // smallestFile index with the one from the smaller value detected on the group
+                    // Procura pelo arquivo ativo com o menor valor do grupo
                     for (int j = 0; j < activeFile.length; j++) {
-                        // if the smallestFile is still set as -1, the function resolves and sets the
-                        // smallestFile as j
+                        // Assume o primeiro valor encontrado caso nenhum tenha sido definido ainda
                         if (activeFile[j] && (smallestFile < 0 || vals[smallestFile] > vals[j])) {
                             smallestFile = j;
                         }
                     }
 
-                    // gets the file to be writen based on the activeColumn % bufferLimit, since
-                    // each group combined will go to the same aux writer file and this will only
-                    // change on the next run of the while and this while only treats the elements
-                    // of the same group
-                    auxWriter[activeColumn % bufferLimit].write(
-                            // checks if it is the first line to be writen on the writerFile, if false,
-                            // inserts a line breaker before inserting the value
+                    /**
+                     * O arquivo a ser escrito é definido pelo resto da divisão do index da coluna
+                     * ativa com o limite da memória. Cada nova coluna será inteiramente escrita
+                     * dentro do mesmo arquivo, mudando o arquivo de escrita a cada execução do
+                     * while pai deste while
+                     */
+                    auxWriter[activeColumn % memoryLimit].write(
+                            // Caso não seja a 1° linha a ser escrita no arquivo, insere uma quebra de linha
                             (counter % groupSize != 0 || activeColumn >= 3)
                                     ? String.format("\n%d", vals[smallestFile])
                                     : String.format("%d", vals[smallestFile]));
 
-                    // sets the file as inactive if there are no more lines on the file or if the
-                    // last position read is on the end of the column/group
+                    /**
+                     * Define o arquivo como inativo se não existem mais linhas a serem lidas ou a
+                     * última posição lida corresponde ao fim da coluna atual
+                     */
                     activeFile[smallestFile] = auxReader[smallestFile].hasNextLine()
                             && ((lastPosFile[smallestFile] + 1) < (Math.pow(3, activeGroup) * (activeColumn + 1)));
 
-                    // if the file is not inactive yet, vals receive the next value from the same
-                    // file that the one written came from
+                    /**
+                     * Caso o arquivo ainda não esteja inativo, vals recebe o próximo valor oriundo
+                     * do mesmo arquivo em que o escrito veio
+                     */
                     if (activeFile[smallestFile]) {
-                        // receives the next value on the file
+                        // Recebe o próximo valor do arquivo
                         vals[smallestFile] = Integer.parseInt(auxReader[smallestFile].nextLine());
-                        // increase the last position read by 1, following the value read
+                        // Atualiza o index da última posição lida no arquivo
                         lastPosFile[smallestFile]++;
                     }
 
-                    // increase the counter value by 1
+                    // Soma 1 à quantidade de vezes que o while foi executado
                     counter++;
                 }
 
-                // increase the activeColumn value by 1 once the while has ended and all the
-                // values from the last columns were written on the files
+                // Atualiza o index para o da próxima coluna a ser combinada
                 activeColumn++;
             }
 
-            // closes all the aux reader files and all the aux writer files
+            // Fecha todos os arquivos auxiliares para realizar a troca dos grupos
             for (int i = 0; i < auxReader.length; i++) {
                 auxWriter[i].close();
                 auxReader[i].close();
             }
 
-            // calls itself again to proceed with the next group of files, changing the ones
-            // that were written to be read and the ones that were read to be written the
-            // new values ordered. it also returns the function so the result of it (the one
-            // File with all values ordered in the same File) goes back to the main function
-            // after it all end. the function parameter is activeGroup + 1 for the same
-            // explanation I have gave on the beginning of the function
+            /**
+             * Chama a si mesma recursivamente adicionando um ao valor do grupo ativo,
+             * gerando a alternância entre pares e ímpares que define quem será leitor e
+             * quem será escritor.
+             * 
+             * Retorna o File que será gerado ao findar das chamadas recursivas.
+             */
             return alternateOrder(activeGroup + 1);
         } catch (FileNotFoundException err) {
             err.printStackTrace();
@@ -321,22 +352,33 @@ public class App {
             err.printStackTrace();
         }
 
-        // if something goes wrong on the code above, it returns null to the main
-        // function
+        // Caso haja algum erro durante a execução acima, retorna null
         return null;
     }
 
+    /**
+     * Função que realiza a leitura do arquivo auxiliar final ordenado e copia seus
+     * valores para o arquivo de entrada original.
+     * 
+     * @param fileResult arquivo final com todos os valores ordenados.
+     */
     public static void printResult(File fileResult) {
         try {
+            // Define o escritor para o arquivo de entrada
             FileWriter entryMain = new FileWriter(pathMain + "/" + entMainName);
 
+            // Define o leitor do arquivo auxiliar final
             Scanner reader = new Scanner(fileResult);
 
+            // Enquanto existir mais valores a serem copiados
             while (reader.hasNextLine()) {
+                // Armazena o valor lido
                 String val = reader.nextLine();
+                // Copia o valor para entrada e insere quebras de linha até o último valor
                 entryMain.write(reader.hasNextLine() ? val + "\n" : val);
             }
 
+            // Fecha o arquivo de entrada e o arquivo auxiliar final
             entryMain.close();
             reader.close();
         } catch (FileNotFoundException err) {
@@ -344,69 +386,79 @@ public class App {
         } catch (IOException err) {
             err.printStackTrace();
         }
-
     }
 
-    // main function, holds all the code to be executed in order
+    /**
+     * Função principal, gere todo o código a ser executado em ordem.
+     * 
+     * @param args parametros provenientes da linha de comando.
+     */
     public static void main(String[] args) throws Exception {
-        // clears the console and sets the time of the beginning of the algorithm
-        // execution
+        // Função que limpa o código e salva o horário inicial da execução
         Utils.initialize();
 
-        // if a parameter is sent to the program, its assumed that the parameter is the
-        // amount of random numbers desired
+        /**
+         * Se existe algum argumento, assume que o mesmo é um inteiro e define uma
+         * quantidade de números aleatórios iniciais.
+         */
         if (args.length > 0) {
             try {
-                // trys to parse the parameter to a integer
+                // Tenta converter o parâmetro para inteiro
                 int sizeArray = Integer.parseInt(args[0]);
 
-                // creates a random int array with the size informed with the parameter
+                // Função que cria um vetor de inteiros aleatório do tamanho especificado
                 int[] intArray = Utils.randomIntArray(sizeArray);
 
-                // creates a writer to set all the random values to the main entry file
+                // Cria um escritor para armazenar os inteiros aleatórios na entrada
                 FileWriter entryMain = new FileWriter(pathMain + "/" + entMainName);
 
-                // function that prints all the values within the file
+                // Função que escreve os valores no arquivo de entrada e gera um de referência
                 Utils.printArrayToFile(entryMain, intArray);
 
-                // closes the file
+                // Fecha o arquivo de entrada
                 entryMain.close();
             } catch (Exception err) {
-                // if something goes wrong with the parameter or the file, returns the function
-                // and cancels the execution
+                // Caso haja erro com o parâmetro, cancela a execução do código
                 err.printStackTrace();
                 System.out.println("\n\nErro ao tentar processar o parâmetro informado.");
                 return;
             }
         }
 
-        // does the first ordering getting values from the main entry file "entrada.txt"
-        // and writting them on the aux files. also retrieves the count of how many
-        // entries were detected on the main entry file
+        /**
+         * Recebe os valores do arquivo de entrada, faz a primeira ordenação de acordo
+         * com o tamanho limite da memória e insere as colunas geradas nos arquivos
+         * auxiliares 1, 2 e 3.
+         */
         int entriesRead = splitMainEntry();
 
-        // prints the amount of values found on the main entry file
+        // Escreve no console a quantidade de valores no arquivo de entrada
         System.out.println(String.format("Foram lidos %d valores no arquivo %s", entriesRead, entMainName));
 
-        // calls the recursive function that will call itself until that is just one
-        // file left with all the values ordered and returns it as a File
+        /**
+         * A função é chamada recursivamente até que todos os valores estejam ordenados
+         * no mesmo arquivo auxiliar, depois retorna esse arquivo.
+         */
         File auxFileResult = alternateOrder(1);
 
-        // it there was no error during the above function call, the variable
-        // auxFileResult will be not null, therefore, we can print the results on the
-        // main entry file "entrada.txt" again
+        /**
+         * Caso haja erro na execução da função acima, é retornado um valor nulo e o
+         * mesmo é verificado abaixo. Caso não seja nulo, o arquivo resultante é enviado
+         * para a função que realizará a cópia do mesmo para o arquivo de entrada
+         * original.
+         */
         if (auxFileResult != null) {
-            // calls the function that clones the result file to the main entry file
             printResult(auxFileResult);
         }
-        // if there was an error, auxFileResult will be null and a custom error message
-        // is displayed on the console
+        // Caso seja nulo, escreve uma mensagem no console
         else {
             System.out.println("Erro ocorrido durante o processamento nos arquivos");
         }
 
-        // calls the function that gets the time passed between the beginning of the
-        // execution and its finish, printing the ending message along with it
+        /**
+         * Função de finalização, onde é contabilizado o tempo total de execução do
+         * código e uma mensagem de finalização é escrita no console.
+         */
         Utils.finish();
     }
 }

@@ -19,6 +19,9 @@ public class Utils {
         System.out.println("");
     }
 
+    /**
+     * @param qtd
+     */
     // jumps a qtd number of lines
     public static void jumpLines(int qtd) {
         for (int i = 0; i < qtd; i++) {
@@ -46,6 +49,10 @@ public class Utils {
         System.out.println(String.format("Execução finalizada com sucesso.\nTempo de execução: %d", timeDifference));
     }
 
+    /**
+     * @param amount
+     * @return int[]
+     */
     // generates a random int array with the size of the parameter amount
     public static int[] randomIntArray(int amount) {
         // creates the new array with the size requested
@@ -66,6 +73,11 @@ public class Utils {
         return intArray;
     }
 
+    /**
+     * @param printTo
+     * @param intArray
+     * @return boolean
+     */
     // prints the array to a file sent as parameter and to a reference file, line by
     // line
     public static boolean printArrayToFile(FileWriter printTo, int[] intArray) {
@@ -94,6 +106,11 @@ public class Utils {
         }
     }
 
+    /**
+     * @param arr
+     * @param val
+     * @return boolean
+     */
     // checks if there is a specific boolean value in the given boolean array
     public static boolean boolArrayContains(boolean[] arr, boolean val) {
         // loops through the array until it finds the value, otherwise, the loop ends
