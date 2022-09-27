@@ -2,91 +2,103 @@ import java.io.FileWriter;
 import java.util.Date;
 import java.util.Random;
 
-// class to hold every function that has no main effect on the execution of the code besides visualization on console
+/**
+ * Classe de utilidades para auxílio na class App (principal)
+ */
 public class Utils {
-    // variable to store the beginning time of the algorithm execution
+    // Variável para armazenar o horário de início de execução do código
     private static Date initialTime;
 
-    // clear the console window
+    /**
+     * Função que limpa o console do terminal
+     */
     public static void clear() {
         System.out.print("\033[H\033[2J");
         System.out.flush();
     }
 
-    // jumps 2 lines by default
+    /**
+     * Função que pula duas linhas no console do terminal
+     */
     public static void jumpLines() {
         System.out.println("");
         System.out.println("");
     }
 
     /**
-     * @param qtd
+     * Função de pula um número especificado de linhas no console do terminal
+     *
+     * @param qtd quantidade de linhas a serem puladas no console do terminal
      */
-    // jumps a qtd number of lines
     public static void jumpLines(int qtd) {
         for (int i = 0; i < qtd; i++) {
             System.out.println("");
         }
     }
 
-    // clear the console for improved visualization and sets the time that the code
-    // started to run
+    /**
+     * Limpa o console e armazena o horário de início da execução do código
+     */
     public static void initialize() {
         clear();
         initialTime = new Date();
     }
 
-    // prints the ending message along with the time passed between the beginning of
-    // the execution until now
+    /**
+     * Função de finalização, onde é contabilizado o tempo total de execução do
+     * código e uma mensagem de finalização é escrita no console.
+     */
     public static void finish() {
         Date finalTime = new Date();
-        // gets the time difference between the beginning of the execution and the time
-        // now
+        // Quantifica a quantidade em milissegundos entre o horário inicial e agora
         var timeDifference = finalTime.getTime() - initialTime.getTime();
 
-        // jumps 3 lines and prints the ending message
+        // Pula 3 linhas e escreve a mensagem final de execução
         jumpLines(3);
         System.out.println(String.format("Execução finalizada com sucesso.\nTempo de execução: %d", timeDifference));
     }
 
     /**
-     * @param amount
-     * @return int[]
+     * Função que gera um vetor de inteiros preenchido com uma quantidade
+     * especificada de valores aleatórios
+     *
+     * @param amount quantidade de valores aleatórios a serem gerados
+     * @return int[] vetor de inteiros preenchido aleatóriamente
      */
-    // generates a random int array with the size of the parameter amount
     public static int[] randomIntArray(int amount) {
-        // creates the new array with the size requested
+        // Cria um vetor de inteiros de tamanho definido pelo parâmetro amount
         int[] intArray = new int[amount];
 
-        // creates the Random instance
+        // Instancia o gerador de aleatórios
         Random rand = new Random();
-        // sets the upper bound for the random numbers
+        // Define o maior valor possível para os números aleatórios gerados
         int maxValue = 2000;
 
-        // loops through the array filling it with random numbers
+        // Roda o número de inteiros desejados e armazena os mesmos na posição
+        // respectiva do vetor
         for (int i = 0; i < intArray.length; i++) {
-            // sets the random number
+            // Armazena um número aleatório inteiro
             intArray[i] = rand.nextInt(maxValue);
         }
 
-        // returns the filled array
+        // Retorna o vetor de inteiros aleatório preenchido
         return intArray;
     }
 
     /**
-     * @param printTo
-     * @param intArray
-     * @return boolean
+     * Função que escreve um vetor de inteiros ao arquivo definido, linha por linha.
+     * Além do arquivo original, escreve também um arquivo cópia de referência.
+     * 
+     * @param printTo  arquivo para escrita do vetor
+     * @param intArray vetor a ser escrito no arquivo
+     * @return boolean retorna true não houver erro, false se houver erro
      */
-    // prints the array to a file sent as parameter and to a reference file, line by
-    // line
     public static boolean printArrayToFile(FileWriter printTo, int[] intArray) {
         try {
-            // creates writer for the reference file
+            // Cria um escritor para o arquivo de referência
             FileWriter writerReference = new FileWriter("referencia.txt", false);
 
-            // loops through array, writing each value to a new line in the file reference
-            // and in the parameter file
+            // Itera o vetor de inteiros, escrevendo os valores linha a linha nos arquivos
             for (int i = 0; i < intArray.length; i++) {
                 String line = i > 0 ? String.format("\n%d", intArray[i])
                         : String.format("%d", intArray[i]);
@@ -95,31 +107,36 @@ public class Utils {
                 printTo.write(line);
             }
 
-            // closes the reference file
+            // Fecha o arquivo de referência
             writerReference.close();
 
-            // returns true if no Exception were thrown
+            // Retorna true se nenhum erro foi gerado
             return true;
         } catch (Exception err) {
-            // returns false if something goes wrong
+            // Retorna false se ocorreu algum erro
             return false;
         }
     }
 
     /**
-     * @param arr
-     * @param val
-     * @return boolean
+     * Função que realiza uma verificação em um vetor booleano procurando por um
+     * valor booleano. Retorna true se o valor estiver presente no vetor e false
+     * caso contrário
+     * 
+     * @param arr vetor para procurar o valor
+     * @param val valor a ser procurado no vetor
+     * @return boolean retorna true se o valor for encontrado no vetor e false se
+     *         não for encontrado
      */
-    // checks if there is a specific boolean value in the given boolean array
     public static boolean boolArrayContains(boolean[] arr, boolean val) {
-        // loops through the array until it finds the value, otherwise, the loop ends
-        // and false is sent meaning the value was not found
+        // Itera pelo vetor procurando pelo valor
         for (int i = 0; i < arr.length; i++) {
+            // Se o valor for encontrado, retorna true
             if (arr[i] == val) {
                 return true;
             }
         }
+        // Se não for encontrado, retorna false;
         return false;
     }
 }
